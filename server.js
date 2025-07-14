@@ -1,5 +1,6 @@
 import 'express-async-errors';
 import * as dotenv from 'dotenv';
+import cors from 'cors';
 dotenv.config();
 const port = process.env.PORT || 5000;
 import express from 'express';
@@ -27,6 +28,8 @@ cloudinary.config({
   api_secret: process.env.CLOUD_API_SECRET,
 });
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const __buildDirname = dirname(fileURLToPath(import.meta.url));
+
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
@@ -35,6 +38,15 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use(express.static(path.resolve(__dirname, './public')));
+app.use(express.static(path.resolve(__buildDirname, './client/dist')));
+
+// cors
+
+app.use(
+  cors({
+    origin: '*',
+  })
+);
 
 //ROUTES
 app.use('/api/v1/jobs', authenticateUser, jobRouter);
